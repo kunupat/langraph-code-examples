@@ -157,10 +157,10 @@ def create_graph():
 
     # Initialize the LLM
     model = ChatOllama(
-        model="ministral-3:14b",
+        model="ministral-3:14b", #qwen3:8b
         temperature=0,
     )
-    logger.info("Initialized ChatOllama model: ministral-3:14b")
+    logger.info("Initialized ChatOllama model...")
 
     # Create the ReAct agent with MCP tools and system prompt
     agent = create_agent(
