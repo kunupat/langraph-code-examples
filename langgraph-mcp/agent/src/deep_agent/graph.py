@@ -6,12 +6,10 @@ from __future__ import annotations
 import asyncio
 import logging
 
-from langchain.agents import create_agent
 from deepagents import create_deep_agent
 from deepagents.backends import FilesystemBackend
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_ollama import ChatOllama
-from langgraph.checkpoint.memory import MemorySaver
 
 # Set up logging
 logger = logging.getLogger(__name__)
