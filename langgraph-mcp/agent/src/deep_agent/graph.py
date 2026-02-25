@@ -64,18 +64,17 @@ def _build_system_prompt(tools: list) -> str:
 
 
 def create_graph():
-    """Create and configure the ReAct agent graph.
+    """Create and configure the Deep agent graph.
 
     This function sets up:
     - Ollama LLM
     - MCP tools from the FastMCP server
-    - DeepEval callback handler with TaskCompletionMetric
-    - ReAct agent using create_agent
+    - Deep agent using create_deep_agent
 
     Returns:
         Compiled LangGraph agent.
     """
-    logger.info("Initializing ReAct agent with MCP tools...")
+    logger.info("Initializing Deep agent with MCP tools...")
 
     # Load tools from MCP server first
     tools = asyncio.run(get_mcp_tools())
