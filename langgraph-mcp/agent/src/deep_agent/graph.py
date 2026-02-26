@@ -7,6 +7,7 @@ import asyncio
 import logging
 
 from deepagents import create_deep_agent
+from langchain.agents import create_agent
 from deepagents.backends import FilesystemBackend
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_ollama import ChatOllama
@@ -89,16 +90,15 @@ def create_graph():
     )
     logger.info("Initialized ChatOllama model...")
 
-    # Create the ReAct agent with MCP tools and system prompt
+    # Create the Deep agent with MCP tools and system prompt
     agent = create_deep_agent( #create_agent
         model=model,
         tools=tools,
         system_prompt=system_prompt,
         backend=FilesystemBackend(root_dir="/Users/kunalpatil/genai-playground/langraph-code-examples/langgraph-mcp/agent/filesystem/",virtual_mode=True),
         debug=True,
-
     )
-    logger.info("ReAct agent created successfully")
+    logger.info("Deep agent created successfully")
 
     return agent
 
@@ -112,3 +112,11 @@ except Exception as e:
     logger.error(f"Error creating graph: {e}")
     import traceback
     traceback.print_exc()
+
+    # Fallback: create a simple agent without MCP tools if connection fails
+    logger.warning("Creating fallback agent without MCP tools")
+    model = ChatOllama(model="llama3.1")
+    graph = create_agent(
+        model=model,
+        tools=[],  # Empty tools list as fallback
+    )
