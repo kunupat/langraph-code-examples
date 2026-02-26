@@ -7,10 +7,13 @@ import asyncio
 import logging
 
 from deepagents import create_deep_agent
+from dotenv import load_dotenv
 from langchain.agents import create_agent
 from deepagents.backends import FilesystemBackend
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_ollama import ChatOllama
+
+load_dotenv()
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -85,7 +88,7 @@ def create_graph():
 
     # Initialize the LLM
     model = ChatOllama(
-        model="ministral-3:14b", #qwen3:8b
+        model="qwen3:14b", #qwen3:8b, ministral-3:14b
         temperature=0,
     )
     logger.info("Initialized ChatOllama model...")
@@ -94,7 +97,7 @@ def create_graph():
     agent = create_deep_agent( #create_agent
         model=model,
         tools=tools,
-        system_prompt=system_prompt,
+        #system_prompt=system_prompt,
         backend=FilesystemBackend(root_dir="/Users/kunalpatil/genai-playground/langraph-code-examples/langgraph-mcp/agent/filesystem/",virtual_mode=True),
         debug=True,
     )

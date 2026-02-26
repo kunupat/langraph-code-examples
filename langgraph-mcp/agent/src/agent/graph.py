@@ -6,9 +6,13 @@ from __future__ import annotations
 import asyncio
 import logging
 
+from dotenv import load_dotenv
 from langchain.agents import create_agent
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_ollama import ChatOllama
+
+
+load_dotenv()
 
 # Set up logging
 logger = logging.getLogger(__name__)
