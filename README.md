@@ -1,12 +1,14 @@
-This repository contains three cooperating projects used for a small LangGraph + MCP example.
+# Langgraph Code Examples
 
-Overview
+This repository contains following projects used for a small LangGraph + MCP example and other examples.
+
+## Overview
 - `my-chat-ui` — Next.js + Turbo monorepo UI for chat (frontend).
 - `my-chat-ui-deep-agent`- A simple front-end in Next.js built on top of the `my-chat-ui` to add Deep Agent specific UI components.
 - `langgraph-mcp/mcp-server` — FastMCP HTTP server exposing tools via MCP.
 - `langgraph-mcp/agent` — It has two agents: 1. A simple LangGraph agent that loads tools from the MCP server and uses Ollama LLM. 2. A simple DeepAgent implementation
 
-Quick start (recommended run order)
+## Quick start (recommended run order)
 1. Start the Ollama model (local model server).
 2. Start the MCP server.
 3. Start the agent (it loads tools from the MCP server).
@@ -77,14 +79,14 @@ Notes:
 
 - The `dev` script runs the monorepo dev servers (Turbo) used by the app.
 
-Integration summary
+## Integration summary
 - The UI sends user requests to your backend (typically the MCP server or an MCP-aware gateway). The agent connects to the MCP server at `http://localhost:8000/mcp` to load tools and orchestrates the LLM (Ollama) to answer queries. The MCP server is independent and should be started before the agent so the agent can fetch tool definitions.
 
-Troubleshooting
+## Troubleshooting
 - If the agent cannot load tools, verify the MCP server is running and reachable at `http://localhost:8000/mcp`.
 - If the agent fails to initialize the LLM, confirm Ollama is running and the model name matches the one configured (the agent code in this repo uses `ministral-3:14b`).
 
-Contributing
+## Contributing
 - Each subproject has its own `README.md` with more details.
 
 ---
