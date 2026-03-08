@@ -4,7 +4,7 @@ This repository contains following projects used for a small LangGraph + MCP exa
 
 ## Overview
 - `my-chat-ui` — Next.js + Turbo monorepo UI for chat (frontend).
-- `my-chat-ui-deep-agent`- A simple front-end in Next.js built on top of the `my-chat-ui` to add Deep Agent specific UI components.
+- `my-chat-ui-deep-agent`- A simple front-end in Next.js built on top of the `my-chat-ui` to add Deep Agent specific UI components (reference: https://github.com/langchain-ai/langgraphjs/tree/main/examples/ui-react).
 - `langgraph-mcp/mcp-server` — FastMCP HTTP server exposing tools via MCP.
 - `langgraph-mcp/agent` — It has two agents: 1. A simple LangGraph agent that loads tools from the MCP server and uses Ollama LLM. 2. A simple DeepAgent implementation
 
