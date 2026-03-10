@@ -82,6 +82,8 @@ Notes:
 5) Deep Agent UI
 - Purpose: a simple front-end built on top of `my-chat-ui` that adds Deep Agent specific UI components (reference: https://github.com/langchain-ai/langgraphjs/tree/main/examples/ui-react).
 
+> Note: `deep-agents-ui` is expected to be a separate cloned project (not committed into this repo). It is ignored by Git via `.gitignore`.
+
 - Initialize and run (requires Node.js and `yarn`):
 
 ```bash
