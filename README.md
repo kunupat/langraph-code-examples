@@ -76,6 +76,18 @@ Notes:
 
 - The `dev` script runs the monorepo dev servers (Turbo) used by the app.
 
+5) Deep Agent UI
+Refer: https://github.com/langchain-ai/deep-agents-ui
+
+```
+bash
+
+git clone https://github.com/langchain-ai/deep-agents-ui.git
+cd deep-agents-ui
+yarn install
+yarn dev
+
+```
 Integration summary
 - The UI sends user requests to your backend (typically the MCP server or an MCP-aware gateway). The agent connects to the MCP server at `http://localhost:8000/mcp` to load tools and orchestrates the LLM (Ollama) to answer queries. The MCP server is independent and should be started before the agent so the agent can fetch tool definitions.
 

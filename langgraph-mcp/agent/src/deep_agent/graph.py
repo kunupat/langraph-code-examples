@@ -88,7 +88,7 @@ def create_graph():
 
     # Initialize the LLM
     model = ChatOllama(
-        model="qwen3:14b", #qwen3:8b, ministral-3:14b
+        model="gpt-oss:20b", #qwen3:14b, qwen3:8b, ministral-3:14b
         temperature=0,
     )
     logger.info("Initialized ChatOllama model...")
