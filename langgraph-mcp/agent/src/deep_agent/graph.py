@@ -5,15 +5,30 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import os
 
 from deepagents import create_deep_agent
-from dotenv import load_dotenv
-from langchain.agents import create_agent
+from dotenv import load_dotenv, dotenv_values
 from deepagents.backends import FilesystemBackend
-from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_ollama import ChatOllama
+from datetime import datetime
 
-load_dotenv()
+from deep_agent.prompts import (
+    RESEARCHER_INSTRUCTIONS,
+    RESEARCH_WORKFLOW_INSTRUCTIONS,
+    SUBAGENT_DELEGATION_INSTRUCTIONS,
+    HOTEL_SEARCH_INSTRUCTIONS,
+)
+from deep_agent.tools import (
+    internet_search,
+    think_tool,
+    get_mcp_tools,
+)
+
+# Load environment variables from the project's .env file (root of the agent package)
+# Use override=True so values in .env take precedence over any existing env vars.
+env_path = os.path.join(os.path.dirname(__file__), "..", "..", ".env")
+load_dotenv(env_path, override=True)
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -22,49 +37,24 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 
-
-async def get_mcp_tools():
-    """Load tools from the MCP server.
-
-    Returns:
-        List of LangChain-compatible tools from the MCP server.
-    """
-    logger.info("Connecting to MCP server at http://localhost:8000/mcp")
-
-    # Configure MCP client to connect to local FastMCP server
-    client = MultiServerMCPClient({
-        "langgraph-mcp-server": {
-            "url": "http://localhost:8000/mcp",
-            "transport": "http",
-        }
-    })
-
-    # Get tools from the MCP server
-    tools = await client.get_tools()
-    logger.info(f"Loaded {len(tools)} tools from MCP server: {[tool.name for tool in tools]}")
-
-    return tools
-
-
 def _build_system_prompt(tools: list) -> str:
-    """Build dynamic system prompt with available tools and their signatures."""
+    """Build system prompt based on shared prompts in prompts.py."""
 
-    tools_info = ""
-    if tools:
-        tools_info = "\n\nAVAILABLE TOOLS:\n"
-        for tool in tools:
-            tool_name = tool.name
-            tool_description = tool.description or "No description available"
-            tools_info += f"\n- {tool_name}: {tool_description}"
-    else:
-        tools_info = "\n\nNo tools currently available."
+    current_date = datetime.now().strftime("%Y-%m-%d")
+    logger.info("Researcher instructions:\n%s", RESEARCHER_INSTRUCTIONS.format(date=current_date))
 
-    system_prompt = f"""
-                    You are a helpful assistant that can use the following tools to answer user queries.
-                    {tools}
-                    """
+    INSTRUCTIONS = (
+        RESEARCH_WORKFLOW_INSTRUCTIONS
+        + "\n\n"
+        + "=" * 80
+        + "\n\n"
+        + SUBAGENT_DELEGATION_INSTRUCTIONS.format(
+            max_concurrent_research_units=3,
+            max_researcher_iterations=3,
+        )
+    )
 
-    return system_prompt
+    return INSTRUCTIONS
 
 
 def create_graph():
@@ -83,24 +73,63 @@ def create_graph():
     # Load tools from MCP server first
     tools = asyncio.run(get_mcp_tools())
 
+    # Add local tools (not served by MCP)
+    tools.append(internet_search)
+    tools.append(think_tool)
+
+    current_date = datetime.now().strftime("%Y-%m-%d")
+
+    research_sub_agent = {
+        "name": "research-agent",
+        "description": "Delegate research to the sub-agent researcher. Only give this researcher one topic at a time.",
+        "system_prompt": RESEARCHER_INSTRUCTIONS.format(date=current_date),
+        "tools": [internet_search, think_tool],
+    }
+
+    hotel_search_sub_agent = {
+        "name": "hotel-search-agent",
+        "description": "Delegate hotel search to the sub-agent hotel searcher. Only give this hotel searcher one topic at a time.",
+        "system_prompt": HOTEL_SEARCH_INSTRUCTIONS.format(date=current_date),
+        "tools": [internet_search, think_tool],
+    }
+
     # Build system prompt with tool information
     system_prompt = _build_system_prompt(tools)
 
-    # Initialize the LLM
+    dotenv_vars = dotenv_values(env_path)
+
+    ollama_api_key = (dotenv_vars.get("OLLAMA_API_KEY") or "").strip()
+
+    if ollama_api_key.endswith("%"):
+        ollama_api_key = ollama_api_key.rstrip("%\n \t").strip()
+
+    if not ollama_api_key:
+        raise RuntimeError("OLLAMA_API_KEY not found in .env. Please add a valid key to .env so the Ollama client can authenticate.")
+
+    client_kwargs = {
+        "headers": {"Authorization": f"Bearer {ollama_api_key}"},
+    }
+
     model = ChatOllama(
-        model="gpt-oss:20b", #qwen3:14b, qwen3:8b, ministral-3:14b
+        model="nemotron-3-super:cloud", #gpt-oss:120b-cloud, qwen3.5, deepseek-r1:14b, granite3.3, qwen3, gpt-oss:20b, qwen3:14b, qwen3:8b, ministral-3:14b
         temperature=0,
+        context_window=262144,
+        thiking=True,
+        disable_streaming=False,
+        client_kwargs=client_kwargs,
+        validate_model_on_init=True,
     )
     logger.info("Initialized ChatOllama model...")
 
-    # Create the Deep agent with MCP tools and system prompt
+    # Create the Deep agent with MCP tools, system prompt, and sub-agent config
     agent = create_deep_agent( #create_agent
         model=model,
         tools=tools,
-        #system_prompt=system_prompt,
-        backend=FilesystemBackend(root_dir="/Users/kunalpatil/genai-playground/langraph-code-examples/langgraph-mcp/agent/filesystem/",virtual_mode=True),
+        system_prompt=system_prompt,
+        subagents=[research_sub_agent, hotel_search_sub_agent],
+        backend=FilesystemBackend(root_dir="./filesystem/",virtual_mode=True),
         debug=True,
-    )
+        )
     logger.info("Deep agent created successfully")
 
     return agent
@@ -109,17 +138,9 @@ def create_graph():
 # Create the graph instance
 try:
     graph = create_graph()
-    logger.info("Deep AgentGraph compiled and ready")
+    logger.info("Deep Agent Graph compiled and ready")
 
 except Exception as e:
     logger.error(f"Error creating graph: {e}")
     import traceback
     traceback.print_exc()
-
-    # Fallback: create a simple agent without MCP tools if connection fails
-    logger.warning("Creating fallback agent without MCP tools")
-    model = ChatOllama(model="llama3.1")
-    graph = create_agent(
-        model=model,
-        tools=[],  # Empty tools list as fallback
-    )

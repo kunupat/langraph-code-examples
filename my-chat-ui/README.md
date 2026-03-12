@@ -1,8 +1,9 @@
-Frontend Next.js (Turbo) chat UI used in this example monorepo.
+Frontend Next.js (Turbo) chat UI for the simple ReActAgent example.
 
 Prerequisites
 - Node.js (16+ recommended)
 - pnpm package manager
+- Backend services running: Ollama, MCP server, and LangGraph agent (see [root README](../README.md))
 
 Setup
 
@@ -19,5 +20,6 @@ pnpm dev
 
 Notes
 - The UI runs in the Turbo monorepo; `pnpm dev` starts the web and agents dev servers.
-- Configure backend endpoints or API keys as needed; see the project root README for integration order (Ollama -> MCP server -> agent -> UI).
+- This is the UI for the simple ReActAgent. For the DeepAgent UI, use [deep-agents-ui](https://github.com/langchain-ai/deep-agents-ui) instead.
+- See the project root README for the recommended startup order: Ollama -> MCP server -> agent -> UI.
 

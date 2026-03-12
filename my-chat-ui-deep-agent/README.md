@@ -1,23 +1,27 @@
-Frontend Next.js (Turbo) chat UI used in this example monorepo.
+⚠️ **DEPRECATED** — This directory is deprecated. Please use [deep-agents-ui](https://github.com/langchain-ai/deep-agents-ui) instead.
 
-Prerequisites
-- Node.js (16+ recommended)
-- pnpm package manager
+The [deep-agents-ui](https://github.com/langchain-ai/deep-agents-ui) project is the maintained implementation for the DeepAgent UI and provides a better-maintained alternative with all the latest features.
 
-Setup
+## Setup (Legacy)
+
+To use this deprecated version:
 
 ```bash
-cd my-chat-ui
+cd my-chat-ui-deep-agent
 pnpm install
-```
-
-Run (development)
-
-```bash
 pnpm dev
 ```
 
-Notes
-- The UI runs in the Turbo monorepo; `pnpm dev` starts the web and agents dev servers.
-- Configure backend endpoints or API keys as needed; see the project root README for integration order (Ollama -> MCP server -> agent -> UI).
+## Recommended Alternative
+
+For the DeepAgent UI, clone and use the maintained project:
+
+```bash
+git clone https://github.com/langchain-ai/deep-agents-ui.git
+cd deep-agents-ui
+yarn install
+yarn dev
+```
+
+See the project root README for complete DeepAgent setup instructions.
 
