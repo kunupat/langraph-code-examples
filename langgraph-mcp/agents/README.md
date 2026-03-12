@@ -10,7 +10,7 @@ This directory contains two LangGraph agent implementations that load tools from
 ## Setup
 
 ```bash
-cd langgraph-mcp/agent
+cd langgraph-mcp/agents
 python -m venv .venv
 source .venv/bin/activate
 pip install -e .

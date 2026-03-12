@@ -11,7 +11,7 @@ This repository contains following projects used for a small LangGraph + MCP exa
 
 3. `langgraph-mcp/mcp-server` — FastMCP HTTP server exposing tools via MCP.
 
-4. `langgraph-mcp/agent` — It has two agents: 
+4. `langgraph-mcp/agents` — It has two agents: 
 	1. A simple **LangGraph agent** that loads tools from the MCP server and uses Ollama LLM. 
 	2. A simple **DeepAgent** implementation with a research sub-agent, hotel search sub-agent and a main agent that can call the research agent or hotel search agent as a tool. Both agents use the same MCP server for tools and Ollama for LLM. Reference: https://github.com/langchain-ai/deepagents/tree/main/examples/deep_research
 
@@ -53,13 +53,13 @@ This repository contains following projects used for a small LangGraph + MCP exa
 Notes:
 - The server uses `uvicorn` internally and will print the HTTP and MCP endpoint on startup.
 
-### 3. Agent (langgraph-mcp/agent)
+### 3. Agent (langgraph-mcp/agents)
 - Purpose: a LangGraph ReAct agent that loads tools from the MCP server and queries the Ollama model.
 
 - Initialize and run:
 
 	```bash
-	cd langgraph-mcp/agent
+	cd langgraph-mcp/agents
 	python -m venv .venv
 	source .venv/bin/activate
 	pip install -e .
@@ -134,13 +134,13 @@ Notes:
 Notes:
 - The server uses `uvicorn` internally and will print the HTTP and MCP endpoint on startup.
 
-### 4. Deep Agent (langgraph-mcp/agent)
+### 4. Deep Agent (langgraph-mcp/agents)
 - Purpose: a simple Deep Agent implementation with a research sub-agent, hotel search sub-agent, and a main agent that can call the research agent or hotel search agent as a tool. Both agents use the same MCP server for tools and Ollama for LLM.
 
 - Initialize and run:
 
 	```bash
-	cd langgraph-mcp/agent
+	cd langgraph-mcp/agents
 	python -m venv .venv
 	source .venv/bin/activate
 	pip install -e .
