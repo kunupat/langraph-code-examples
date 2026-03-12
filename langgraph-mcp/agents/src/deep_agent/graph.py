@@ -25,6 +25,9 @@ from deep_agent.tools import (
     get_mcp_tools,
 )
 
+from langfuse import get_client
+from langfuse.langchain import CallbackHandler
+
 # Load environment variables from the project's .env file (root of the agent package)
 # Use override=True so values in .env take precedence over any existing env vars.
 env_path = os.path.join(os.path.dirname(__file__), "..", "..", ".env")
@@ -36,6 +39,23 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
+ 
+# Initialize Langfuse client
+langfuse = get_client()
+langfuse_handler = None
+
+# Verify connection (optional - don't fail if Langfuse is unavailable)
+try:
+    if langfuse.auth_check():
+        print("Langfuse client is authenticated and ready!")
+        # Initialize Langfuse CallbackHandler for LangChain (tracing)
+        langfuse_handler = CallbackHandler()
+    else:
+        print("Langfuse authentication failed. Continuing without tracing.")
+        logger.warning("Langfuse authentication failed. Continuing without tracing.")
+except Exception as e:
+    print(f"Langfuse connection failed: {e}. Continuing without tracing.")
+    logger.warning(f"Langfuse connection failed: {e}. Continuing without tracing.")
 
 def _build_system_prompt(tools: list) -> str:
     """Build system prompt based on shared prompts in prompts.py."""
@@ -111,7 +131,7 @@ def create_graph():
     }
 
     model = ChatOllama(
-        model="nemotron-3-super:cloud", #gpt-oss:120b-cloud, qwen3.5, deepseek-r1:14b, granite3.3, qwen3, gpt-oss:20b, qwen3:14b, qwen3:8b, ministral-3:14b
+        model="nemotron-3-super:cloud", #nemotron-3-super:cloud, gpt-oss:120b-cloud, qwen3.5, deepseek-r1:14b, granite3.3, qwen3, gpt-oss:20b, qwen3:14b, qwen3:8b, ministral-3:14b
         temperature=0,
         context_window=262144,
         thiking=True,
@@ -137,7 +157,7 @@ def create_graph():
 
 # Create the graph instance
 try:
-    graph = create_graph()
+    graph = create_graph().with_config({"callbacks": [langfuse_handler]})
     logger.info("Deep Agent Graph compiled and ready")
 
 except Exception as e:

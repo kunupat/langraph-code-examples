@@ -5,14 +5,20 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import os
 
 from dotenv import load_dotenv
 from langchain.agents import create_agent
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_ollama import ChatOllama
 
+from langfuse import get_client
+from langfuse.langchain import CallbackHandler
 
-load_dotenv()
+# Load environment variables from the project's .env file (root of the agent package)
+# Use override=True so values in .env take precedence over any existing env vars.
+env_path = os.path.join(os.path.dirname(__file__), "..", "..", ".env")
+load_dotenv(env_path, override=True)
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -20,6 +26,23 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
+ 
+# Initialize Langfuse client
+langfuse = get_client()
+langfuse_handler = None
+
+# Verify connection (optional - don't fail if Langfuse is unavailable)
+try:
+    if langfuse.auth_check():
+        print("Langfuse client is authenticated and ready!")
+        # Initialize Langfuse CallbackHandler for LangChain (tracing)
+        langfuse_handler = CallbackHandler()
+    else:
+        print("Langfuse authentication failed. Continuing without tracing.")
+        logger.warning("Langfuse authentication failed. Continuing without tracing.")
+except Exception as e:
+    print(f"Langfuse connection failed: {e}. Continuing without tracing.")
+    logger.warning(f"Langfuse connection failed: {e}. Continuing without tracing.")
 
 
 async def get_mcp_tools():
@@ -145,7 +168,6 @@ def create_graph():
     This function sets up:
     - Ollama LLM
     - MCP tools from the FastMCP server
-    - DeepEval callback handler with TaskCompletionMetric
     - ReAct agent using create_agent
 
     Returns:

@@ -160,14 +160,40 @@ Notes:
 	yarn dev
 	```
 
-## Integration summary
+# Langfuse Configuration (Optional)
+
+**Prereq**: Ensure Docker Desktop is installed and running on your machine (if want to run Langfuse locally).
+
+1. Steps to install & set up Langfuse locally can be found here: https://langfuse.com/self-hosting/deployment/docker-compose#get-started
+
+2. Once set up, start it by running `docker compose up` in the directory where you set up Langfuse. This will make the Langfuse dashboard available at `http://localhost:3000`.
+
+3. Sign-up for an account on Langfuse and set up your Langfuse account and get your secret and public keys. 
+
+4. Set Langfuse secret and public keys in your `.env` file (refer to `.env.example` file for key names and add your key values there) before running the agent.
+
+5. Refer the agent and deep agent code for how to integrate Langfuse tracing in your agent. The code examples in this repo use a `LangfuseCallbackHandler` that sends traces to the local Langfuse instance.
+ 	- More details in Langfuse integration with Langgraph and Langgraph Dev Server can be found here: https://langfuse.com/guides/cookbook/integration_langgraph
+
+## Accessing Langfuse Dashboard
+- Once your `docker compose up` command is running for Langfuse, it will be available at `http://localhost:3000`.
+- Open http://localhost:3000 in your browser to access the Langfuse dashboard and view traces from your agent.
+- Sign-up for an account or log in if you already have one.
+
+
+# Configuring Ollama Cloud Models in Langfuse Playground
+1. Login to Langfuse
+2. Go to Settings -> New LLM Connection -> LLM Adapter -> Choose `OpenAI` from the list -> Provider Name: `Ollama Cloud` (or any name) -> API Key: `your Ollama API key`. -> API Base URL: `https://ollama.com/api/v1`, -> Show Adavanced settings -> Custom Models: Add Model Name: `nemotron-3-super:cloud` (or your desired model), then save the connection.
+
+
+# Integration summary
 - The UI sends user requests to your backend (typically the MCP server or an MCP-aware gateway). The agent connects to the MCP server at `http://localhost:8000/mcp` to load tools and orchestrates the LLM (Ollama) to answer queries. The MCP server is independent and should be started before the agent so the agent can fetch tool definitions.
 
-## Troubleshooting
+# Troubleshooting
 - If the agent cannot load tools, verify the MCP server is running and reachable at `http://localhost:8000/mcp`.
 - If the agent fails to initialize the LLM, confirm Ollama is running and the model name matches the one configured (the agent code in this repo uses `ministral-3:14b`).
 
-## Contributing
+# Contributing
 - Each subproject has its own `README.md` with more details.
 
 ---
