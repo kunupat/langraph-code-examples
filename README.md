@@ -15,7 +15,7 @@ This repository contains following projects used for a small LangGraph + MCP exa
 	1. A simple **LangGraph agent** that loads tools from the MCP server and uses Ollama LLM. 
 	2. A simple **DeepAgent** implementation with a research sub-agent, hotel search sub-agent and a main agent that can call the research agent or hotel search agent as a tool. Both agents use the same MCP server for tools and Ollama for LLM. Reference: https://github.com/langchain-ai/deepagents/tree/main/examples/deep_research
 
-# Running The Simple ReActAgent
+# Running The Simple ReAct Agent
 
 ## Quick start (recommended run order)
 1. Start the Ollama model (local model server).
