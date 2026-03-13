@@ -11,9 +11,16 @@ This repository contains following projects used for a small LangGraph + MCP exa
 
 3. `langgraph-mcp/mcp-server` — FastMCP HTTP server exposing tools via MCP.
 
-4. `langgraph-mcp/agents` — It has two agents: 
+4. `langgraph-mcp/agents` — It has the following agents: 
 	1. A simple **LangGraph agent** that loads tools from the MCP server and uses Ollama LLM. 
 	2. A simple **DeepAgent** implementation with a research sub-agent, hotel search sub-agent and a main agent that can call the research agent or hotel search agent as a tool. Both agents use the same MCP server for tools and Ollama for LLM. Reference: https://github.com/langchain-ai/deepagents/tree/main/examples/deep_research
+	3. A **DeepAgent with Skill** implementation that builds on top of the DeepAgent by adding a skill that can be called by the main agent. 
+	
+		**Skills References:**
+		- https://docs.langchain.com/oss/python/deepagents/skills#filesystembackend
+		- https://github.com/langchain-ai/deepagents/tree/main/examples/content-builder-agent
+		- https://agentskills.io/home
+	
 
 # Running The Simple ReAct Agent
 
@@ -159,6 +166,10 @@ Notes:
 	yarn install
 	yarn dev
 	```
+## Running Deep Agent with Skill
+Follow the same steps as of **Running The Example Deep Agent**.
+
+On the Deep Agent Chat UI, set `deep_agent_with_skill` as the agent endpoint instead of `deep_agent` to connect to the Deep Agent with Skill implementation.
 
 # Langfuse Configuration (Optional)
 
