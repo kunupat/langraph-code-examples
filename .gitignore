@@ -3,3 +3,5 @@
 /.venv
 /langgraph-mcp/.venv
 deep-agents-ui/
+langgraph-mcp/agents/src/deep_agent_with_skills/large_tool_results/
+langgraph-mcp/agents/src/deep_agent_with_skills/final_explanation.md
